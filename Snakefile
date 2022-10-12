@@ -8,7 +8,7 @@ configfile:"proj_config.yaml"
 
 SAMPLES, = glob_wildcards("data/fastq/{sample}_R1.fastq.gz")
 
-localrules: collect_fqc_metrics, collect_trimgalore_metrics, collect_bismark_metrics
+#localrules: collect_fqc_metrics, collect_trimgalore_metrics, collect_bismark_metrics
 
 rule all:
     input:
@@ -48,9 +48,9 @@ rule trim_galore:
         "envs/trimgalore.yaml"
     params:
         basename = "{sample}",
-        outdir = "data/trimming",
+        outdir = "data/trimming"
     shell:
-        "trim_galore --paired --basename {params.basename} -o {params.outdir}"
+        "trim_galore --paired --basename {params.basename} -o {params.outdir} {input.fwd} {input.rev}"
 
 rule fastqc_trim:
     input:
