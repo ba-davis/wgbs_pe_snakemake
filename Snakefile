@@ -18,7 +18,7 @@ rule all:
         "data/fastqc/raw/fqc_stats.table.txt",
         "data/trimming/trimgalore_stats.txt",
         "data/bismark_aln/bismark_stats.txt",
-        expand("data/bismark_aln/dedup/{sample}_val_1_bismark_bt2_pe.deduplicated.bam")
+        expand("data/bismark_aln/dedup/{sample}_val_1_bismark_bt2_pe.deduplicated.bam", sample = SAMPLES)
         
 
 
