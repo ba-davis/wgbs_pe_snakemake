@@ -1,6 +1,5 @@
 
 # Snakefile to analyze WGBS PE data
-# 
 
 configfile:"proj_config.yaml"
 #project_id = config["project_id"]
@@ -102,7 +101,7 @@ rule collect_trimgalore_metrics:
         inpath = "data/trimming",
         outfile = "data/trimming/trimgalore_stats.txt"
     shell:
-        "python scripts/parse.trimgalore.rrbs.pe.logs.py -d {params.inpath} -o {params.outfile}"
+        "python scripts/parse.trimgalore.wgbs.pe.logs.py -d {params.inpath} -o {params.outfile}"
 
 rule collect_bismark_metrics:
     input:
