@@ -115,3 +115,16 @@ rule collect_bismark_metrics:
         outfile = "data/bismark_aln/bismark_stats.txt"
     shell:
         "python scripts/parse.bismark.pe.logs.py -d {params.inpath} -o {params.outfile}"
+
+rule bismark_dedup:
+    input:
+        bam = "data/bismark_aln/{sample}_val_1_bismark_bt2_pe.bam"
+    output:
+        "data/bismark_aln/dedup/{sample}_val_1_bismark_bt2_pe.deduplication_report.txt",
+        dedup_bam = "data/bismark_aln/dedup/{sample}_val_1_bismark_bt2_pe.deduplicated.bam"
+    conda:
+        "envs/bismark.yaml"
+    params:
+        outdir = "data/bismark_aln/dedup/"
+    shell:
+        "deduplicate_bismark -p --output_dir {params.outdir} --bam {input.bam}"

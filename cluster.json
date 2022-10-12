@@ -27,5 +27,10 @@
     {
         "stdout": "logs/bismark_%A.out",
         "stderr": "logs/bismark_%A.err"
+    },
+    "bismark_dedup":
+    {
+        "stdout": "logs/bismark_dedup_%A.out",
+        "stderr": "logs/bismark_dedup_%A.err"
     }
 }
