@@ -15,3 +15,5 @@ Differences from rrbs pe:
 
   - trimgalore: don't use "--rrbs" parameter for wgbs
   - bismark align: use the "--nondirectional" parameter (usually our wgbs libraries are non directional)
+  - collect trimgalore stats: don't collect "RRBS_Reads_Trimmed" column
+  

@@ -1,12 +1,12 @@
 #----------------------------------------------------------------------------------------------------------------#
-# Purpose: to parse relevant info from a directory of TrimGalore RRBS log files                                  #
+# Purpose: to parse relevant info from a directory of TrimGalore WGBS log files                                  #
 #          and produce an outfile containing a table of trimming stats per sample                                #
 #                                                                                                                #
 # Useage: ./parse.trimgalore.logs.py -d /path/to/trimming/reports -o path/to/outfile                             #
 #----------------------------------------------------------------------------------------------------------------#
 
 # Notes:
-#        - Currently set up for PE RRBS TrimGalore reports
+#        - Currently set up for PE WGBS TrimGalore reports
 
 # TO DO: - Make agnostic to WGBS or RRBS?
 #        - Make a SE option or a separate SE script
@@ -31,7 +31,7 @@ outfile=opts.outfile
 # open outfile for writing
 fhw = open(outfile, "w+")
 # write colnames to outfile
-fhw.write('Fastq_File' + '\t' + 'Seq_Pairs_Processed' + '\t' + 'RRBS_reads_trimmed' + '\t' + 'Seqs_Pair_Validated' + '\t' + 'Seqs_Rm' + '\t' + 'Seqs_Rm_Perc' + '\n')
+fhw.write('Fastq_File' + '\t' + 'Seq_Pairs_Processed' + '\t' + '\t' + 'Seqs_Pair_Validated' + '\t' + 'Seqs_Rm' + '\t' + 'Seqs_Rm_Perc' + '\n')
 
 # for file ending in 'trimming_report.txt' in directory
 for file in os.listdir(in_dir):
@@ -51,11 +51,6 @@ for file in os.listdir(in_dir):
                 if ('sequences processed in total' in line):
                     intname=line.split(' ')[0]
                     printList.append(intname + '\t')
-                if ('RRBS reads trimmed' in line):
-                    intname=line.split(' ')[-1].rstrip()
-                    intname2=intname.replace('(','')
-                    intname3=intname2.replace(')', '')
-                    printList.append(intname3 + '\t')
                 if ('sequence pair length validation' in line):
                     intname=line.split(' ')[-1].rstrip()
                     printList.append(intname + '\t')
