@@ -1,0 +1,31 @@
+{
+    "__default__":
+    {
+        "account": "davibr",
+        "mem": "30G",
+        "time": "0-24:00",
+	    "partition": "exacloud",
+	    "cores": "8",
+	    "nodes": "1"
+    },
+    "fastqc_raw":
+    {
+	    "stdout": "logs/fastqcRaw_%A.out",
+	    "stderr": "logs/fastqcRaw_%A.err"
+    },
+    "trim_galore":
+    {
+        "stdout": "logs/trimgalore_%A.out",
+        "stderr": "logs/trimgalore_%A.err"
+    },
+    "fastqc_trim":
+    {
+        "stdout": "logs/fastqcTrim_%A.out",
+        "stderr": "logs/fastqcTrim_%A.err"
+    },
+    "bismark_aln":
+    {
+        "stdout": "logs/bismark_%A.out",
+        "stderr": "logs/bismark_%A.err"
+    }
+}
