@@ -156,6 +156,7 @@ rule meth_extract:
     conda:
         "envs/bismark.yaml"
     params:
+        genome_dir = config["bismark_ref_genome"],
         outdir = "data/meth_extract"
     shell:
-        "bismark_methylation_extractor -p --comprehensive --merge_non_CpG --bedGraph --cytosine_report -o {params.outdir} {input.dedup_bam}" 
+        "bismark_methylation_extractor -p --comprehensive --merge_non_CpG --bedGraph --cytosine_report --genome_folder {params.genome_dir} -o {params.outdir} {input.dedup_bam}" 
