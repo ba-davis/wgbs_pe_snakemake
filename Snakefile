@@ -133,7 +133,7 @@ rule bismark_dedup:
 
 rule collect_bismark_dedup_stats:
     input:
-        expand("data/bismark_aln/dedup/{sample}_val_1_bismark_bt2_pe.deduplication_report.txt")
+        expand("data/bismark_aln/dedup/{sample}_val_1_bismark_bt2_pe.deduplication_report.txt", sample = SAMPLES)
     output:
         "data/bismark_aln/dedup/bismark_dedup_stats.txt"
     conda:
