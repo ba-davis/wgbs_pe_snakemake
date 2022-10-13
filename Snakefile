@@ -7,7 +7,7 @@ configfile:"proj_config.yaml"
 
 SAMPLES, = glob_wildcards("data/fastq/{sample}_R1.fastq.gz")
 
-localrules: collect_fqc_metrics, collect_trimgalore_metrics, collect_bismark_metrics, collect_bismark_dedup_stats
+localrules: collect_fqc_metrics, collect_trimgalore_metrics, collect_bismark_metrics, collect_bismark_dedup_metrics
 
 rule all:
     input:
@@ -19,7 +19,8 @@ rule all:
         "data/trimming/trimgalore_stats.txt",
         "data/bismark_aln/bismark_stats.txt",
         expand("data/bismark_aln/dedup/{sample}_val_1_bismark_bt2_pe.deduplicated.bam", sample = SAMPLES),
-        "data/bismark_aln/dedup/bismark_dedup_stats.txt"
+        "data/bismark_aln/dedup/bismark_dedup_stats.txt",
+        expand("data/meth_extract/{sample}_val_1_bismark_bt2_pe.deduplicated.CpG_report.txt.gz", sample = SAMPLES)
         
 
 
@@ -131,7 +132,7 @@ rule bismark_dedup:
     shell:
         "deduplicate_bismark -p --output_dir {params.outdir} --bam {input.bam}"
 
-rule collect_bismark_dedup_stats:
+rule collect_bismark_dedup_metrics:
     input:
         expand("data/bismark_aln/dedup/{sample}_val_1_bismark_bt2_pe.deduplication_report.txt", sample = SAMPLES)
     output:
@@ -144,4 +145,17 @@ rule collect_bismark_dedup_stats:
     shell:
         "python scripts/parse.bismark_dedup.pe.logs.py -d {params.inpath} -o {params.outfile}"
 
-
+rule meth_extract:
+    input:
+        dedup_bam = "data/bismark_aln/dedup/{sample}_val_1_bismark_bt2_pe.deduplicated.bam"
+    output:
+        "data/meth_extract/{sample}_val_1_bismark_bt2_pe.deduplicated.CpG_report.txt.gz",
+        "data/meth_extract/{sample}_val_1_bismark_bt2_pe.deduplicated.bismark.cov.gz",
+        "data/meth_extract/{sample}_val_1_bismark_bt2_pe.deduplicated.bedGraph.gz",
+        "data/meth_extract/{sample}_val_1_bismark_bt2_pe.deduplicated.M-bias.txt"
+    conda:
+        "envs/bismark.yaml"
+    params:
+        outdir = "data/meth_extract"
+    shell:
+        "bismark_methylation_extractor -p --comprehensive --merge_non_CpG --bedGraph --cytosine_report -o {params.outdir} {input.dedup_bam}" 

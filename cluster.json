@@ -32,5 +32,10 @@
     {
         "stdout": "logs/bismark_dedup_%A.out",
         "stderr": "logs/bismark_dedup_%A.err"
+    },
+    "meth_extract":
+    {
+        "stdout": "logs/meth_extract_%A.out",
+        "stderr": "logs/meth_extract_%A.err"
     }
 }
