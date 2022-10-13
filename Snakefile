@@ -7,7 +7,7 @@ configfile:"proj_config.yaml"
 
 SAMPLES, = glob_wildcards("data/fastq/{sample}_R1.fastq.gz")
 
-localrules: collect_fqc_metrics, collect_trimgalore_metrics, collect_bismark_metrics
+localrules: collect_fqc_metrics, collect_trimgalore_metrics, collect_bismark_metrics, collect_bismark_dedup_stats
 
 rule all:
     input:
@@ -18,7 +18,8 @@ rule all:
         "data/fastqc/raw/fqc_stats.table.txt",
         "data/trimming/trimgalore_stats.txt",
         "data/bismark_aln/bismark_stats.txt",
-        expand("data/bismark_aln/dedup/{sample}_val_1_bismark_bt2_pe.deduplicated.bam", sample = SAMPLES)
+        expand("data/bismark_aln/dedup/{sample}_val_1_bismark_bt2_pe.deduplicated.bam", sample = SAMPLES),
+        "data/bismark_aln/dedup/bismark_dedup_stats.txt"
         
 
 
@@ -129,3 +130,18 @@ rule bismark_dedup:
         outdir = "data/bismark_aln/dedup/"
     shell:
         "deduplicate_bismark -p --output_dir {params.outdir} --bam {input.bam}"
+
+rule collect_bismark_dedup_stats:
+    input:
+        expand("data/bismark_aln/dedup/{sample}_val_1_bismark_bt2_pe.deduplication_report.txt")
+    output:
+        "data/bismark_aln/dedup/bismark_dedup_stats.txt"
+    conda:
+        "envs/python3_general.yaml"
+    params:
+        inpath = "data/bismark_aln/dedup"
+        outfile = "data/bismark_aln/dedup/bismark_dedup_stats.txt"
+    shell:
+        "python scripts/parse.bismark_dedup.pe.logs.py -d {params.inpath} -o {params.outfile}"
+
+
