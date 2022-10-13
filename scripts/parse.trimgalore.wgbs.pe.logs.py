@@ -31,10 +31,10 @@ outfile=opts.outfile
 # open outfile for writing
 fhw = open(outfile, "w+")
 # write colnames to outfile
-fhw.write('Fastq_File' + '\t' + 'Seq_Pairs_Processed' + '\t' + '\t' + 'Seqs_Pair_Validated' + '\t' + 'Seqs_Rm' + '\t' + 'Seqs_Rm_Perc' + '\n')
+fhw.write('Sample_Name' + '\t' + 'Seq_Pairs_Processed' + '\t' + '\t' + 'Seqs_Pair_Validated' + '\t' + 'Seqs_Rm' + '\t' + 'Seqs_Rm_Perc' + '\n')
 
 # for file ending in 'trimming_report.txt' in directory
-for file in os.listdir(in_dir):
+for file in sorted(os.listdir(in_dir)):
     filename = os.fsdecode(file)
     if filename.endswith("trimming_report.txt"):
         path_file=in_dir + '/' + filename

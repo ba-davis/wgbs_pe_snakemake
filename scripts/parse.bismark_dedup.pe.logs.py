@@ -37,7 +37,7 @@ fhw.write('Sample_Name' + '\t' + 'Input_Alignments' + '\t' + 'Dup_Aln_Rm' + '\t'
 
 # Loop through files in input directory, and work on files ending in *report.txt
 #   to grab lines of interest and record the metric to an output file
-for file in os.listdir(in_dir):
+for file in sorted(os.listdir(in_dir)):
     filename = os.fsdecode(file)
     if filename.endswith("report.txt"):
         path_file=in_dir + '/' + filename

@@ -33,11 +33,11 @@ outfile=opts.outfile
 # open outfile for writing
 fhw = open(outfile, "w+")
 # write colnames to outfile
-fhw.write('Fastq_File' + '\t' + 'Input_Reads' + '\t' + 'Unique_Alignments' + '\t' + 'Unq_Alignment_Rate' + '\t' + 'No_Alignments' + '\t' + 'Multimapped' + '\t' + 'Discarded' + '\t' + 'Total_Cs_Analyzed' + '\t' + 'CpG_Context' + '\t' + 'CHG_Context' + '\t' + 'CHH_Context' + '\t' + 'Unknown_Context' + '\n')
+fhw.write('Sample_Name' + '\t' + 'Input_Reads' + '\t' + 'Unique_Alignments' + '\t' + 'Unq_Alignment_Rate' + '\t' + 'No_Alignments' + '\t' + 'Multimapped' + '\t' + 'Discarded' + '\t' + 'Total_Cs_Analyzed' + '\t' + 'CpG_Context' + '\t' + 'CHG_Context' + '\t' + 'CHH_Context' + '\t' + 'Unknown_Context' + '\n')
 
 # Loop through files in input directory, and work on files ending in *report.txt
 #   to grab lines of interest and record the metric to an output file
-for file in os.listdir(in_dir):
+for file in sorted(os.listdir(in_dir)):
     filename = os.fsdecode(file)
     if filename.endswith("report.txt"):
         path_file=in_dir + '/' + filename

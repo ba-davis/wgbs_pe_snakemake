@@ -47,7 +47,7 @@ paste -d "\t" tmp_readsR1.txt tmp2_readsR2.txt tmp2_readLengthR1.txt tmp2_readLe
 sort tmp_fqc_stats.tmp.txt > fqc_stats.table.txt
 
 # add a header
-sed -i '1s/^/Fastq_File\tR1_raw_reads\tR2_raw_reads\tR1_read_length\tR2_read_length\tR1_GC%\tR2_GC%\tR1_dup%\tR2_dup%\n/' fqc_stats.table.txt
+sed -i '1s/^/Sample_Name\tR1_raw_reads\tR2_raw_reads\tR1_read_length\tR2_read_length\tR1_GC%\tR2_GC%\tR1_dup%\tR2_dup%\n/' fqc_stats.table.txt
 rm tmp*.txt
 
 # Move output file and change directories
