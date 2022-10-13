@@ -139,7 +139,7 @@ rule collect_bismark_dedup_stats:
     conda:
         "envs/python3_general.yaml"
     params:
-        inpath = "data/bismark_aln/dedup"
+        inpath = "data/bismark_aln/dedup",
         outfile = "data/bismark_aln/dedup/bismark_dedup_stats.txt"
     shell:
         "python scripts/parse.bismark_dedup.pe.logs.py -d {params.inpath} -o {params.outfile}"
