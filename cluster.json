@@ -6,7 +6,8 @@
         "time": "0-24:00",
 	    "partition": "exacloud",
 	    "cores": "8",
-	    "nodes": "1"
+	    "nodes": "1",
+        "qos": "normal"
     },
     "fastqc_raw":
     {
@@ -25,6 +26,9 @@
     },
     "bismark_aln":
     {
+        "qos": "long_jobs",
+	    "time": "7-00",
+        "mem": "72G",
         "stdout": "logs/bismark_%A.out",
         "stderr": "logs/bismark_%A.err"
     },
