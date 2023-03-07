@@ -81,7 +81,7 @@ rule bismark_aln:
         genome_dir = config["bismark_ref_genome"],
 	    outdir = "data/bismark_aln"
     shell:
-        "bismark -p 4 {params.genome_dir} -1 {input.fwd} -2 {input.rev} -o {params.outdir} --non_directional --bam"
+        "bismark -p 4 {params.genome_dir} -1 {input.fwd} -2 {input.rev} -o {params.outdir} --bam"
 
 rule collect_fqc_metrics:
     input:
