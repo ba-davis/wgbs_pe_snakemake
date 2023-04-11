@@ -159,4 +159,4 @@ rule meth_extract:
         genome_dir = config["bismark_ref_genome"],
         outdir = "data/meth_extract"
     shell:
-        "bismark_methylation_extractor -p --comprehensive --merge_non_CpG --bedGraph --cytosine_report --gzip --genome_folder {params.genome_dir} -o {params.outdir} {input.dedup_bam}" 
+        "bismark_methylation_extractor -p --comprehensive --ignore 2 --ignore_r2 2 --ignore_3prime_r2 2 --merge_non_CpG --bedGraph --cytosine_report --gzip --genome_folder {params.genome_dir} -o {params.outdir} {input.dedup_bam}" 

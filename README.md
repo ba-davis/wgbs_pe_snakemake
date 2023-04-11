@@ -23,7 +23,7 @@ snakemake --rerun-incomplete --use-conda --jobs 100 --latency-wait 60 --cluster-
 Differences from rrbs pe:
 
   - trimgalore: don't use "--rrbs" parameter for wgbs
-  - ???REMOVE???bismark align: use the "--nondirectional" parameter (usually our wgbs libraries are non directional)
   - collect trimgalore stats: don't collect "RRBS_Reads_Trimmed" column
   - bismark dedup: wgbs data requires deduplication (here, with bismark)
+  - meth_extract: currently including "--ignore 2 --ignore_r2 2 --ignore_3prime_r2 2" (may need to add to rrbs?)
   - collect bismark dedup stats: used in wgbs data only
