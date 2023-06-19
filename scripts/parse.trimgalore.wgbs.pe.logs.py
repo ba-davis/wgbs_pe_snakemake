@@ -31,7 +31,7 @@ outfile=opts.outfile
 # open outfile for writing
 fhw = open(outfile, "w+")
 # write colnames to outfile
-fhw.write('Sample_Name' + '\t' + 'Seq_Pairs_Processed' + '\t' + '\t' + 'Seqs_Pair_Validated' + '\t' + 'Seqs_Rm' + '\t' + 'Seqs_Rm_Perc' + '\n')
+fhw.write('Sample_Name' + '\t' + 'Seq_Pairs_Processed' + '\t' + 'Seqs_Pair_Validated' + '\t' + 'Seqs_Rm' + '\t' + 'Seqs_Rm_Perc' + '\n')
 
 # for file ending in 'trimming_report.txt' in directory
 for file in sorted(os.listdir(in_dir)):
