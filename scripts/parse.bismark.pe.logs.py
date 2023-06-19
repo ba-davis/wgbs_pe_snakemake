@@ -93,7 +93,7 @@ for file in sorted(os.listdir(in_dir)):
                 intname=line.split('\t')[1].rstrip()
                 printList.append(intname + '\t')
             # Get Unknown (CN or CHN) Meth
-            if ('C methylated in unknown context' in line):
+            if ('C methylated in Unknown context' in line):
                 intname=line.split('\t')[1]
                 printList.append(intname)
 
