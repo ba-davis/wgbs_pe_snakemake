@@ -7,7 +7,7 @@ configfile:"proj_config.yaml"
 
 SAMPLES, = glob_wildcards("data/fastq/{sample}_R1.fastq.gz")
 
-localrules: collect_fqc_metrics, collect_trimgalore_metrics, collect_bismark_metrics, collect_bismark_dedup_metrics
+localrules: collect_fqc_metrics, collect_trimgalore_metrics, collect_bismark_metrics, collect_bismark_dedup_metrics, join_metrics
 
 rule all:
     input:
@@ -20,6 +20,7 @@ rule all:
         "data/bismark_aln/bismark_stats.txt",
         expand("data/bismark_aln/dedup/{sample}_val_1_bismark_bt2_pe.deduplicated.bam", sample = SAMPLES),
         "data/bismark_aln/dedup/bismark_dedup_stats.txt",
+	"data/preprocessing_metrics/metrics.txt",
         expand("data/meth_extract/{sample}_val_1_bismark_bt2_pe.deduplicated.CpG_report.txt.gz", sample = SAMPLES)
         
 
@@ -144,6 +145,19 @@ rule collect_bismark_dedup_metrics:
         outfile = "data/bismark_aln/dedup/bismark_dedup_stats.txt"
     shell:
         "python scripts/parse.bismark_dedup.pe.logs.py -d {params.inpath} -o {params.outfile}"
+
+rule join_metrics:
+    input:
+        fqc = "data/fastqc/raw/fqc_stats.table.txt",
+	trim = "data/trimming/trimgalore_stats.txt",
+	aln = "data/bismark_aln/bismark_stats.txt",
+	dedup = "data/bismark_aln/dedup/bismark_dedup_stats.txt"
+    output:
+        "data/preprocessing_metrics/metrics.txt"
+    params:
+        outfile = "data/preprocessing_metrics/metrics.txt"
+    shell:
+        "join -t $'\t' {input.fqc} {input.trim} | join -t $'\t' - {input.aln} | join -t $'\t' - {input.dedup} > {params.outfile}"
 
 rule meth_extract:
     input:
