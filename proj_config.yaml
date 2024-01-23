@@ -5,3 +5,33 @@ gtf_file:
 
 bismark_ref_genome:
   /home/groups/hoolock2/u0/genomes/ucsc/mm10
+
+metadata_file:
+  "metadata.txt"
+
+group_var:
+  "specific_group" # colname of metadata file to define groups
+
+min_cov:
+  1 # minimum cov for cpg's during object read-in
+
+min_cov_merge:
+  3 # minimum cov for merging samples
+
+perc_merge:
+  "NULL" # high percentage cov cutoff for merging samples
+
+merge_regional:
+  FALSE # whether to merge on cpg-level (FALSE) or merge tiles (TRUE)
+
+min_cpg_region:
+  10 # if merging regions, minimum number of covered CpGs required in the region to retain it
+
+mpg:
+  3 # min per group parameter for merging, NULL means all samples
+
+merge_dirname:
+  "merged_mincov_3_mpg3"
+
+repeat_initial_ide:
+  FALSE # when running IDE the first time, want to set as TRUE. When repeating merging, set to FALSE

@@ -5,23 +5,24 @@ configfile:"proj_config.yaml"
 #project_id = config["project_id"]
 
 
-SAMPLES, = glob_wildcards("data/fastq/{sample}_R1.fastq.gz")
+SAMPLES, = glob_wildcards("data/meth_extract/{sample}_val_1_bismark_bt2_pe.deduplicated.CpG_report.txt.gz")
 
 localrules: collect_fqc_metrics, collect_trimgalore_metrics, collect_bismark_metrics, collect_bismark_dedup_metrics, join_metrics
 
 rule all:
     input:
-        expand("data/fastqc/raw/{sample}_{dir}_fastqc.zip", sample = SAMPLES, dir = ["R1", "R2"]),
-        expand("data/trimming/{sample}_val_{dir}.fq.gz", sample = SAMPLES, dir = ["1", "2"]),
-        expand("data/fastqc/trim/{sample}_val_{dir}_fastqc.zip", sample = SAMPLES, dir = ["1", "2"]),
-        expand("data/bismark_aln/{sample}_val_1_bismark_bt2_pe.bam", sample = SAMPLES),
-        "data/fastqc/raw/fqc_stats.table.txt",
-        "data/trimming/trimgalore_stats.txt",
-        "data/bismark_aln/bismark_stats.txt",
-        expand("data/bismark_aln/dedup/{sample}_val_1_bismark_bt2_pe.deduplicated.bam", sample = SAMPLES),
-        "data/bismark_aln/dedup/bismark_dedup_stats.txt",
-	"data/preprocessing_metrics/metrics.txt",
-        expand("data/meth_extract/{sample}_val_1_bismark_bt2_pe.deduplicated.CpG_report.txt.gz", sample = SAMPLES)
+        #expand("data/fastqc/raw/{sample}_{dir}_fastqc.zip", sample = SAMPLES, dir = ["R1", "R2"]),
+        #expand("data/trimming/{sample}_val_{dir}.fq.gz", sample = SAMPLES, dir = ["1", "2"]),
+        #expand("data/fastqc/trim/{sample}_val_{dir}_fastqc.zip", sample = SAMPLES, dir = ["1", "2"]),
+        #expand("data/bismark_aln/{sample}_val_1_bismark_bt2_pe.bam", sample = SAMPLES),
+        #"data/fastqc/raw/fqc_stats.table.txt",
+        #"data/trimming/trimgalore_stats.txt",
+        #"data/bismark_aln/bismark_stats.txt",
+        #expand("data/bismark_aln/dedup/{sample}_val_1_bismark_bt2_pe.deduplicated.bam", sample = SAMPLES),
+        #"data/bismark_aln/dedup/bismark_dedup_stats.txt",
+	#"data/preprocessing_metrics/metrics.txt",
+        expand("data/meth_extract/{sample}_val_1_bismark_bt2_pe.deduplicated.CpG_report.txt.gz", sample = SAMPLES),
+	"data/ide/ide_complete.txt"
         
 
 
@@ -174,3 +175,27 @@ rule meth_extract:
         outdir = "data/meth_extract"
     shell:
         "bismark_methylation_extractor -p --comprehensive --ignore 2 --ignore_r2 2 --ignore_3prime_r2 2 --merge_non_CpG --bedGraph --cytosine_report --gzip --genome_folder {params.genome_dir} -o {params.outdir} {input.dedup_bam}" 
+
+rule methylkit_ide:
+    input:
+        expand("data/meth_extract/{sample}_val_1_bismark_bt2_pe.deduplicated.bismark.cov.gz", sample = SAMPLES)
+    output:
+        "data/ide/ide_complete.txt"
+    conda:
+        "envs/methylkit.yaml"
+    params:
+        inpath = "data/meth_extract",
+        metadata = config["metadata_file"],
+        group_var = config["group_var"],
+        min_cov = config["min_cov"],
+        outdir = "data/ide",
+        min_cov_merge = config["min_cov_merge"],
+        perc_merge = config["perc_merge"],
+        merge_regional = config["merge_regional"],
+        min_cpg_region = config["min_cpg_region"],
+        mpg = config["mpg"],
+	merge_dirname = config["merge_dirname"],
+	repeat_initial_ide = config["repeat_initial_ide"]
+        
+    shell:
+        "Rscript scripts/run_methylkit_ide.R {params.inpath} {params.metadata} {params.group_var} {params.min_cov} {params.outdir} {params.min_cov_merge} {params.perc_merge} {params.merge_regional} {params.min_cpg_region} {params.mpg} {params.merge_dirname} {params.repeat_initial_ide}"

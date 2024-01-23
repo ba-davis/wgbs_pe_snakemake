@@ -4,15 +4,15 @@
         "account": "davibr",
         "mem": "30G",
         "time": "0-24:00",
-	    "partition": "exacloud",
-	    "cores": "8",
-	    "nodes": "1",
+	"partition": "exacloud",
+	"cores": "8",
+	"nodes": "1",
         "qos": "normal"
     },
     "fastqc_raw":
     {
-	    "stdout": "logs/fastqcRaw_%A.out",
-	    "stderr": "logs/fastqcRaw_%A.err"
+	"stdout": "logs/fastqcRaw_%A.out",
+	"stderr": "logs/fastqcRaw_%A.err"
     },
     "trim_galore":
     {
@@ -27,8 +27,8 @@
     "bismark_aln":
     {
         "qos": "long_jobs",
-	    "time": "7-00",
-        "mem": "72G",
+	"time": "7-00",
+        "mem": "120G",
         "stdout": "logs/bismark_%A.out",
         "stderr": "logs/bismark_%A.err"
     },
@@ -41,5 +41,12 @@
     {
         "stdout": "logs/meth_extract_%A.out",
         "stderr": "logs/meth_extract_%A.err"
+    },
+    "methylkit_ide":
+    {
+        "stdout": "logs/ide_%A.out",
+        "stderr": "logs/ide_%A.err",
+	"mem": "500G",
+	"cores": "12"
     }
 }
