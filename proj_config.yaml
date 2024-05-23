@@ -28,10 +28,103 @@ min_cpg_region:
   10 # if merging regions, minimum number of covered CpGs required in the region to retain it
 
 mpg:
-  3 # min per group parameter for merging, NULL means all samples
+  3 # min per group parameter for merging, "NULL" means all samples
 
 merge_dirname:
   "merged_mincov_3_mpg3"
 
 repeat_initial_ide:
   FALSE # when running IDE the first time, want to set as TRUE. When repeating merging, set to FALSE
+
+########################
+# BSseq IDE Parameters #
+########################
+
+# uses same metadata_file parameter above in methylkit ide
+
+num_cores:
+  8
+
+strand_collapse:
+  TRUE # whether to collapse strands when reading in cpg reports, default is TRUE
+
+############################
+# MethylKit DMR Parameters #
+############################
+
+#my_obj_rds:
+#  "data/ide/RData/my_obj.RDS"
+
+lo_count:
+  5 # minimum cpg coverage required before tiling
+
+hi_perc:
+  "NULL" # maximum cpg coverage percentile before tiling
+
+cov_bases:
+  10 # min number of covered CpGs required in tiled region
+
+tile_mpg:
+  3 # min samples per group a tile must appear in
+
+design_file:
+  "design.txt"
+
+#########################
+# Annotation Parameters #
+#########################
+
+gtf_file:
+  /home/groups/hoolock2/u0/genomes/ucsc/mm10/annotation/mm10.ncbiRefSeq.gtf
+
+gene_info_file:
+  "NULL"
+
+data_source:
+  "GRCm38.99"
+
+organism:
+  "Mus_musculus"
+
+#####################
+# dmrseq Parameters #
+#####################
+
+# when filtering for dmrseq comparison, min CpG cov required
+dmrseq_mincov:
+  1
+
+# when filtering for dmrseq comparison, min Percentage of
+# samples the CpG must have min Cov in
+# this is for samples in the groups used in the specific comparison
+# filtering is performed separately for each comparison
+dmrseq_perc_samp:
+  0.75
+
+# pval cutoff
+dmrseq_cutoff:
+  0.05
+
+# test covariate
+# name of column in design file
+test_covar:
+  Group
+
+# match covariate
+# name of column in design file
+match_covar:
+  Sex
+
+# number of cores for dmrseq
+dmrseq_cores:
+  12
+
+# genome for getAnnot/annotatr/dmrseq
+# for plotting DMRs
+dmr_genome:
+  mm10
+
+# max number of sig DMRs to plot
+num_plot:
+  10
+

@@ -48,5 +48,40 @@
         "stderr": "logs/ide_%A.err",
 	"mem": "500G",
 	"cores": "12"
+    },
+    "bsseq_ide":
+    {
+	"stdout": "logs/bsseq_ide_%A.out",
+        "stderr": "logs/bsseq_ide_%A.err",
+        "mem": "500G",
+        "cores": "8"
+    },
+    "methylkit_dmr":
+    {
+        "stdout": "logs/methylkitDMR_%A.out",
+        "stderr": "logs/methylkitDMR_%A.err",
+        "mem": "500G",
+        "cores": "8"
+    },
+    "annotate_methylkit_dmrs":
+    {
+	"stdout": "logs/methylkitDMR_annot_%A.out",
+        "stderr": "logs/methylkitDMR_annot_%A.err"
+    },
+    "dmrseq_dmr":
+    {
+	"qos": "long_jobs",
+        "time": "7-00",
+	"stdout": "logs/dmrseq_%A.out",
+        "stderr": "logs/dmrseq_%A.err",
+	"mem": "500G",
+        "cores": "12"
+    },
+    "dmrseq_explore":
+    {
+	"stdout": "logs/dmrseq_explore_%A.out",
+        "stderr": "logs/dmrseq_explore_%A.err",
+        "mem": "500G",
+        "cores": "12"
     }
 }

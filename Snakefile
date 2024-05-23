@@ -22,8 +22,12 @@ rule all:
         #"data/bismark_aln/dedup/bismark_dedup_stats.txt",
 	#"data/preprocessing_metrics/metrics.txt",
         expand("data/meth_extract/{sample}_val_1_bismark_bt2_pe.deduplicated.CpG_report.txt.gz", sample = SAMPLES),
-	"data/ide/ide_complete.txt"
-        
+	"data/ide/ide_complete.txt",
+	"data/ide/bsseq_ide/ide_complete.txt",
+	"data/diff/methylkit_dmr/diff_complete.txt",
+	"data/diff/methylkit_dmr/annotation_complete.txt",
+	"data/diff/dmrseq_dmr/dmrseq_diff_complete.txt",
+	"data/diff/dmrseq_dmr/dmrseq_explore_complete.txt"
 
 
 rule fastqc_raw:
@@ -199,3 +203,124 @@ rule methylkit_ide:
         
     shell:
         "Rscript scripts/run_methylkit_ide.R {params.inpath} {params.metadata} {params.group_var} {params.min_cov} {params.outdir} {params.min_cov_merge} {params.perc_merge} {params.merge_regional} {params.min_cpg_region} {params.mpg} {params.merge_dirname} {params.repeat_initial_ide}"
+
+rule bsseq_ide:
+    input:
+        expand("data/meth_extract/{sample}_val_1_bismark_bt2_pe.deduplicated.CpG_report.txt.gz", sample = SAMPLES)
+    output:
+        "data/ide/bsseq_ide/ide_complete.txt"
+    conda:
+        "envs/bsseq.yaml"
+    params:
+        inpath = "data/meth_extract",
+	num_cores = config["num_cores"],
+	metadata = config["metadata_file"],
+	collapse = config["strand_collapse"],
+	outdir = "data/ide/bsseq_ide"
+
+    shell:
+        "Rscript scripts/wgbs_bsseq_ide.R {params.inpath} {params.num_cores} {params.metadata} {params.collapse} {params.outdir}"
+
+rule methylkit_dmr:
+    input:
+        meth_rds = "data/ide/RData/my_obj.RDS"
+    output:
+        "data/diff/methylkit_dmr/diff_complete.txt"
+    conda:
+        "envs/methylkit.yaml"
+    params:
+        lo_count = config["lo_count"],
+        hi_perc = config["hi_perc"],
+        cov_bases = config["cov_bases"],
+        tile_mpg = config["tile_mpg"],
+        design_file = config["design_file"],
+        outdir = "data/diff/methylkit_dmr"
+    shell:
+        """
+        Rscript scripts/methylkit_dmr.R \
+            {input.meth_rds} \
+            {params.lo_count} \
+            {params.hi_perc} \
+            {params.cov_bases} \
+            {params.tile_mpg} \
+            {params.design_file} \
+            {params.outdir}
+        """
+
+rule annotate_methylkit_dmrs:
+    input:
+        "data/diff/methylkit_dmr/diff_complete.txt"
+    output:
+        "data/diff/methylkit_dmr/annotation_complete.txt"
+    conda:
+        "envs/chipseeker.yaml"
+    params:
+        inpath = "data/diff/methylkit_dmr",
+	gtf_file = config["gtf_file"],
+	gene_info_file = config["gene_info_file"],
+	data_source = config["data_source"],
+	organism = config["organism"]
+    shell:
+        """
+	Rscript scripts/run_chipseeker.R \
+	    {params.inpath} \
+	    {params.gtf_file} \
+	    {params.gene_info_file} \
+	    {params.data_source} \
+	    {params.organism}
+	"""
+
+rule dmrseq_dmr:
+    input:
+        bs_obj = "data/ide/bsseq_ide/RData/bs_obj.RDS"
+    output:
+        "data/diff/dmrseq_dmr/dmrseq_diff_complete.txt"
+    conda:
+        "envs/dmrseq.yaml"
+    params:
+        design_file = config["design_file"],
+	outdir = "data/diff/dmrseq_dmr",
+	min_cov = config["dmrseq_mincov"],
+	perc_samp = config["dmrseq_perc_samp"],
+	cutoff = config["dmrseq_cutoff"],
+	test_cov = config["test_covar"],
+	match_cov = config["match_covar"],
+	dmrseq_cores = config["dmrseq_cores"]
+    shell:
+        """
+        Rscript scripts/run_dmrseq.R \
+            {input.bs_obj} \
+            {params.design_file} \
+            {params.outdir} \
+            {params.min_cov} \
+            {params.perc_samp} \
+	    {params.cutoff} \
+	    {params.test_cov} \
+	    {params.match_cov} \
+	    {params.dmrseq_cores}
+        """
+
+rule dmrseq_explore:
+    input:
+        "data/diff/dmrseq_dmr/dmrseq_diff_complete.txt"
+    output:
+        "data/diff/dmrseq_dmr/dmrseq_explore_complete.txt"
+    conda:
+        "envs/dmrseq.yaml"
+    params:
+        indir = "data/diff/dmrseq_dmr/RData",
+        outdir = "data/diff/dmrseq_dmr",
+	cutoff = config["dmrseq_cutoff"],
+	test_cov = config["test_covar"],
+	dmr_genome = config["dmr_genome"],
+	num_plot = config["num_plot"]
+    shell:
+        """
+        Rscript scripts/run_dmrseq_explore.R \
+            {params.indir} \
+	    {params.outdir} \
+	    {params.cutoff} \
+	    {params.test_cov} \
+	    {params.dmr_genome} \
+	    {params.num_plot}
+        """

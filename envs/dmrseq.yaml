@@ -1,0 +1,13 @@
+name: dmrseq_24
+channels:
+  - conda-forge
+  - bioconda
+  - defaults
+dependencies:
+  - r-base=4.1
+  - bioconductor-dmrseq
+  - bioconductor-bsseq
+  - r-tidyverse
+  - bioconductor-txdb.mmusculus.ucsc.mm10.knowngene
+  - bioconductor-org.Mm.eg.db
+
