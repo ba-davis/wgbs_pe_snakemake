@@ -4,7 +4,7 @@
         "account": "davibr",
         "mem": "30G",
         "time": "0-24:00",
-	"partition": "exacloud",
+	"partition": "batch",
 	"cores": "8",
 	"nodes": "1",
         "qos": "normal"

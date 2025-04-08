@@ -5,29 +5,29 @@ configfile:"proj_config.yaml"
 #project_id = config["project_id"]
 
 
-SAMPLES, = glob_wildcards("data/meth_extract/{sample}_val_1_bismark_bt2_pe.deduplicated.CpG_report.txt.gz")
+SAMPLES, = glob_wildcards("data/fastq/{sample}_R1.fastq.gz")
 
 localrules: collect_fqc_metrics, collect_trimgalore_metrics, collect_bismark_metrics, collect_bismark_dedup_metrics, join_metrics
 
 rule all:
     input:
-        #expand("data/fastqc/raw/{sample}_{dir}_fastqc.zip", sample = SAMPLES, dir = ["R1", "R2"]),
-        #expand("data/trimming/{sample}_val_{dir}.fq.gz", sample = SAMPLES, dir = ["1", "2"]),
-        #expand("data/fastqc/trim/{sample}_val_{dir}_fastqc.zip", sample = SAMPLES, dir = ["1", "2"]),
-        #expand("data/bismark_aln/{sample}_val_1_bismark_bt2_pe.bam", sample = SAMPLES),
-        #"data/fastqc/raw/fqc_stats.table.txt",
-        #"data/trimming/trimgalore_stats.txt",
-        #"data/bismark_aln/bismark_stats.txt",
-        #expand("data/bismark_aln/dedup/{sample}_val_1_bismark_bt2_pe.deduplicated.bam", sample = SAMPLES),
-        #"data/bismark_aln/dedup/bismark_dedup_stats.txt",
-	#"data/preprocessing_metrics/metrics.txt",
+        expand("data/fastqc/raw/{sample}_{dir}_fastqc.zip", sample = SAMPLES, dir = ["R1", "R2"]),
+        expand("data/trimming/{sample}_val_{dir}.fq.gz", sample = SAMPLES, dir = ["1", "2"]),
+        expand("data/fastqc/trim/{sample}_val_{dir}_fastqc.zip", sample = SAMPLES, dir = ["1", "2"]),
+        expand("data/bismark_aln/{sample}_val_1_bismark_bt2_pe.bam", sample = SAMPLES),
+        "data/fastqc/raw/fqc_stats.table.txt",
+        "data/trimming/trimgalore_stats.txt",
+        "data/bismark_aln/bismark_stats.txt",
+        expand("data/bismark_aln/dedup/{sample}_val_1_bismark_bt2_pe.deduplicated.bam", sample = SAMPLES),
+        "data/bismark_aln/dedup/bismark_dedup_stats.txt",
+	"data/preprocessing_metrics/metrics.txt",
         expand("data/meth_extract/{sample}_val_1_bismark_bt2_pe.deduplicated.CpG_report.txt.gz", sample = SAMPLES),
-	"data/ide/ide_complete.txt",
-	"data/ide/bsseq_ide/ide_complete.txt",
-	"data/diff/methylkit_dmr/diff_complete.txt",
-	"data/diff/methylkit_dmr/annotation_complete.txt",
-	"data/diff/dmrseq_dmr/dmrseq_diff_complete.txt",
-	"data/diff/dmrseq_dmr/dmrseq_explore_complete.txt"
+	#"data/ide/ide_complete.txt",
+	#"data/ide/bsseq_ide/ide_complete.txt",
+	#"data/diff/methylkit_dmr/diff_complete.txt",
+	#"data/diff/methylkit_dmr/annotation_complete.txt",
+	#"data/diff/dmrseq_dmr/dmrseq_diff_complete.txt",
+	#"data/diff/dmrseq_dmr/dmrseq_explore_complete.txt"
 
 
 rule fastqc_raw:
