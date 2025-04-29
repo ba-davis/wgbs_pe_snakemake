@@ -60,6 +60,7 @@ create_obj <- function(inpath,  metadata, group_var = "group", min_cov = 1) {
   
   # read in metadata table
   meta <- read.delim(metadata, header = TRUE)
+  colnames(meta)[1] <- "sample_name"
   print(head(meta))
   # create vector of treatments by selecting the element of the group column
   # matching the same order as the sample_names vector (taken from the list of input files)
@@ -100,6 +101,15 @@ get_cov_dist_df <- function(my_obj = my_obj) {
   }
   # combine into single vector
   sample_vec <- unlist(sample_list)
+
+  # if vectors are too large (happens with too many samples)
+  # df can't be created in R
+  # check length and cancel if too large
+  if (length(coverage_vec) > 2147483647) {
+    print("Vectors are too large to create coverage df.")
+    print("Consider reducing samples or setting a min cov threshold.")
+    return(NULL)
+  }
 
   # create df for plotting
   df <- data.frame(coverage = coverage_vec,
@@ -465,13 +475,13 @@ plot_pca <- function(df, pc_a="PC1", pc_b="PC2", color_var, shape_var, label_var
   #subtitle <- paste0(pc_a, " by ", pc_b)
 
   # check to see if any variables are "NULL" and change them to NULL
-  if (color_var == "NULL") {
+  if (!is.null(color_var) && color_var == "NULL") {
     color_var <- NULL
   }
-  if (shape_var == "NULL") {
+  if (!is.null(shape_var) && shape_var == "NULL") {
     shape_var <- NULL
   }
-  if (label_var == "NULL") {
+  if (!is.null(label_var) && label_var == "NULL") {
     label_var <- NULL
   }
 
@@ -481,28 +491,63 @@ plot_pca <- function(df, pc_a="PC1", pc_b="PC2", color_var, shape_var, label_var
   } else {
     filename <- paste0(pc_a, "_", pc_b, "_", "color_", color_var, "_shape_", shape_var, ".pdf")
   }
-
-  # General Format of plotting PCA (with snakemake and string variables)
-  myplot <- ggplot(df, aes_string(pc_a, pc_b, color=color_var, shape=shape_var)) +
-    geom_point(size=5) +
+ 
+  myplot <- ggplot(df, aes(x = .data[[pc_a]], y = .data[[pc_b]], 
+                              color = if (!is.null(color_var)) .data[[color_var]] else NULL, 
+                              shape = if (!is.null(shape_var)) .data[[shape_var]] else NULL)) +
+    geom_point(size = 5) +
     xlab(paste0(pc_a, ": ", pc_a_var, "% variance")) +
     ylab(paste0(pc_b, ": ", pc_b_var, "% variance")) +
-    #if (tiles==TRUE) {
-    #  ggtitle(paste0("PCA: CpG Methylation: ", num_cpg, " tiles")) +
-    #}
-    #if (tiles==FALSE) {
-    #  ggtitle(paste0("PCA: CpG Methylation: ", num_cpg, " CpGs")) +
-    #}
-    geom_text(aes_string(label=label_var),hjust=0.7, vjust=-1.1, show.legend = FALSE) +
     theme_classic() +
-    theme(legend.background = element_rect(colour = 'black', fill = 'white', linetype='solid')) +
-    if (tiles==TRUE) {
-      ggtitle(paste0("PCA: CpG Methylation: ", num_cpg, " tiles"))
-    }
-    if (tiles==FALSE) {
-      ggtitle(paste0("PCA: CpG Methylation: ", num_cpg, " CpGs"))
-    }
+    theme(legend.background = element_rect(colour = 'black', fill = 'white', linetype='solid'))
+  # Add labels with ggrepel
+  if (!is.null(label_var)) {
+    myplot <- myplot + 
+      geom_text_repel(aes(label = .data[[label_var]]), 
+                    box.padding = 0.5, # Space around labels
+                    point.padding = 0.3, # Space between label and point
+                    max.overlaps = 15,  # Controls the number of overlaps
+                    show.legend = FALSE)
+  }  
+  # Add label if not null
+  #if (!is.null(label_var)) {
+   # myplot <- myplot + geom_text(aes(label = .data[[label_var]]), hjust = 0.7, vjust = -1.1, show.legend = FALSE)
+  #}
+  # Add title
+  title_text <- paste0("PCA: CpG Methylation: ", num_cpg, if (tiles) " tiles" else " CpGs")
+  myplot <- myplot + ggtitle(title_text)
+  # Explicitly set legend titles
+  if (!is.null(color_var) && !is.null(shape_var)) {
+    myplot <- myplot + labs(color = color_var, shape = shape_var)
+  } else if (!is.null(color_var)) {
+    myplot <- myplot + labs(color = color_var)
+  } else if (!is.null(shape_var)) {
+    myplot <- myplot + labs(shape = shape_var)
+  }
+
   ggsave(filename=filename)
+
+  # General Format of plotting PCA (with snakemake and string variables)
+  #myplot <- ggplot(df, aes_string(pc_a, pc_b, color=color_var, shape=shape_var)) +
+   # geom_point(size=5) +
+   # xlab(paste0(pc_a, ": ", pc_a_var, "% variance")) +
+   # ylab(paste0(pc_b, ": ", pc_b_var, "% variance")) +
+   # #if (tiles==TRUE) {
+   # #  ggtitle(paste0("PCA: CpG Methylation: ", num_cpg, " tiles")) +
+   # #}
+   # #if (tiles==FALSE) {
+   # #  ggtitle(paste0("PCA: CpG Methylation: ", num_cpg, " CpGs")) +
+   # #}
+   # geom_text(aes_string(label=label_var),hjust=0.7, vjust=-1.1, show.legend = FALSE) +
+   # theme_classic() +
+   # theme(legend.background = element_rect(colour = 'black', fill = 'white', linetype='solid')) +
+   # if (tiles==TRUE) {
+   #   ggtitle(paste0("PCA: CpG Methylation: ", num_cpg, " tiles"))
+   # }
+   # if (tiles==FALSE) {
+   #   ggtitle(paste0("PCA: CpG Methylation: ", num_cpg, " CpGs"))
+   # }
+  #ggsave(filename=filename)
 }
 
 
