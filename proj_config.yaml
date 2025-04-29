@@ -1,25 +1,73 @@
 # Config File
 
 gtf_file:
-  /home/groups/hoolock2/myfile.gtf
+  /home/groups/hoolock2/u0/genomes/ucsc/hg38/annotation/hg38.ncbiRefSeq.gtf
 
 bismark_ref_genome:
-  /home/groups/hoolock2/u0/genomes/ucsc/mm10
+  /home/groups/hoolock2/u0/genomes/ucsc/hg38
+
+############################
+# MethylKit IDE Parameters #
+############################
+
+# When running IDE the first time, set as TRUE
+#   - creates outdir (set with ide_outdir param, such as data/ide) and data/ide/RData
+#   - read in cov files to create methylRawList object
+#   - RDS file hardcoded to be saved as "outdir"/RData/my_obj.RDS
+# If object already exists, set as FALSE and point to it with list_object param
+first_time_ide:
+  FALSE
+
+# if a methylRawList object already exists, point to RDS file to read-in
+# can leave as "NULL" if you plan to read in the merged object instead
+list_object:
+  "NULL"
+
+# When running IDE the first time, set as TRUE
+#   - will plot various cov distributions per sample in object
+# If you already have cov distributions and don't want to re-run, set as FALSE
+explore_cov:
+  FALSE
+
+# When running IDE the first time, set as TRUE
+#    - will merge samples according to criteria in params below
+#    - creates merge_dirname directory within outdir
+#    - will export merged object as "meth.RDS" in merge_dirname
+#    - will export perc_meth.RDS in merge_dirname
+# If you already have a merged object, set as FALSE and point to it with merged_obj param
+do_merge:
+  FALSE
+
+# if a merged object already exists, point to RDS file here
+merged_obj:
+  "/home/groups/hoolock2/u0/bd/Projects/ECP92/wgbs_pe_snakemake/data/ide/merged_mincov5_mpg5/meth.RDS"
+# if a perc_meth object already exists, point to RDS file here
+# assumes no missing values for PCA (use imputed if exists)
+perc_meth_obj:
+  "/home/groups/hoolock2/u0/bd/Projects/ECP92/wgbs_pe_snakemake/data/ide/merged_mincov5_mpg5/perc_meth_imputed.RDS"
+
+# base ide folder to create for ide analysis
+ide_outdir:
+  "data/ide"
+
+# path to folder containing Bismark cov files for read-in
+covfile_path:
+  "data/meth_extract"
 
 metadata_file:
   "metadata.txt"
 
 group_var:
-  "specific_group" # colname of metadata file to define groups
+  "condition" # colname of metadata file to define groups for methylRawList object creation
 
 min_cov:
-  1 # minimum cov for cpg's during object read-in
+  1 # minimum cov for CpGs during object creation/file read-in
 
 min_cov_merge:
-  3 # minimum cov for merging samples
+  5 # minimum cov for merging samples (common first attempt is 10 or 5)
 
 perc_merge:
-  "NULL" # high percentage cov cutoff for merging samples
+  99.9 # high percentage cov cutoff for merging samples
 
 merge_regional:
   FALSE # whether to merge on cpg-level (FALSE) or merge tiles (TRUE)
@@ -28,44 +76,34 @@ min_cpg_region:
   10 # if merging regions, minimum number of covered CpGs required in the region to retain it
 
 mpg:
-  3 # min per group parameter for merging, "NULL" means all samples
+  "5" # min per group parameter for merging, NULL means all samples
 
 merge_dirname:
-  "merged_mincov_3_mpg3"
+  "merged_mincov5_mpg5"
 
-repeat_initial_ide:
-  FALSE # when running IDE the first time, want to set as TRUE. When repeating merging, set to FALSE
+# column in metadata file to label points on PCA plot
+pca_label_var:
+  "Replicate"
 
-########################
-# BSseq IDE Parameters #
-########################
-
-# uses same metadata_file parameter above in methylkit ide
-
-num_cores:
-  8
-
-strand_collapse:
-  TRUE # whether to collapse strands when reading in cpg reports, default is TRUE
+# column in metadata file to color points on PCA plot
+pca_color_var:
+  "condition"
 
 ############################
 # MethylKit DMR Parameters #
 ############################
 
-#my_obj_rds:
-#  "data/ide/RData/my_obj.RDS"
-
 lo_count:
   5 # minimum cpg coverage required before tiling
 
 hi_perc:
-  "NULL" # maximum cpg coverage percentile before tiling
+  99.9 # maximum cpg coverage percentile before tiling
 
 cov_bases:
   10 # min number of covered CpGs required in tiled region
 
 tile_mpg:
-  3 # min samples per group a tile must appear in
+  5 # min samples per group a tile must appear in
 
 design_file:
   "design.txt"
@@ -75,56 +113,33 @@ design_file:
 #########################
 
 gtf_file:
-  /home/groups/hoolock2/u0/genomes/ucsc/mm10/annotation/mm10.ncbiRefSeq.gtf
+  /home/groups/hoolock2/u0/genomes/ucsc/hg38/annotation/hg38.ncbiRefSeq.gtf
 
 gene_info_file:
   "NULL"
 
 data_source:
-  "GRCm38.99"
+  "GRCh38"
 
 organism:
-  "Mus_musculus"
+  "Homo_sapiens"
 
+####################
+# HOMER Parameters #
+####################
+
+genome_fa:
+  "/home/groups/hoolock2/u0/genomes/ensembl/mus_musculus/Mus_musculus.GRCm38.dna.primary_assembly.fa" # path to the reference genome fasta to use with homer
+  
+ens_ref:
+  "TRUE" # if "TRUE", means you are using an ensembl ref genome with homer and the GREAT Bed files used as input need to have the "chr" removed
+
+homer_outdir:
+  "data/homer/" # relative path to place output folders
+  
 #####################
-# dmrseq Parameters #
+# Report Parameters #
 #####################
 
-# when filtering for dmrseq comparison, min CpG cov required
-dmrseq_mincov:
-  1
-
-# when filtering for dmrseq comparison, min Percentage of
-# samples the CpG must have min Cov in
-# this is for samples in the groups used in the specific comparison
-# filtering is performed separately for each comparison
-dmrseq_perc_samp:
-  0.75
-
-# pval cutoff
-dmrseq_cutoff:
-  0.05
-
-# test covariate
-# name of column in design file
-test_covar:
-  Group
-
-# match covariate
-# name of column in design file
-match_covar:
-  Sex
-
-# number of cores for dmrseq
-dmrseq_cores:
-  12
-
-# genome for getAnnot/annotatr/dmrseq
-# for plotting DMRs
-dmr_genome:
-  mm10
-
-# max number of sig DMRs to plot
-num_plot:
-  10
-
+project_name:
+  "ECP95 Amy Valent Human RRBS"
