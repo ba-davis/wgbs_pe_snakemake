@@ -11,18 +11,18 @@ localrules: collect_fqc_metrics, collect_trimgalore_metrics, collect_bismark_met
 
 rule all:
     input:
-        expand("data/fastqc/raw/{sample}_{dir}_fastqc.zip", sample = SAMPLES, dir = ["R1", "R2"]),
+        #expand("data/fastqc/raw/{sample}_{dir}_fastqc.zip", sample = SAMPLES, dir = ["R1", "R2"]),
         expand("data/trimming/{sample}_val_{dir}.fq.gz", sample = SAMPLES, dir = ["1", "2"]),
-        expand("data/fastqc/trim/{sample}_val_{dir}_fastqc.zip", sample = SAMPLES, dir = ["1", "2"]),
+        #expand("data/fastqc/trim/{sample}_val_{dir}_fastqc.zip", sample = SAMPLES, dir = ["1", "2"]),
         expand("data/bismark_aln/{sample}_val_1_bismark_bt2_pe.bam", sample = SAMPLES),
-        "data/fastqc/raw/fqc_stats.table.txt",
-        "data/trimming/trimgalore_stats.txt",
-        "data/bismark_aln/bismark_stats.txt",
+        #"data/fastqc/raw/fqc_stats.table.txt",
+        #"data/trimming/trimgalore_stats.txt",
+        #"data/bismark_aln/bismark_stats.txt",
         expand("data/bismark_aln/dedup/{sample}_val_1_bismark_bt2_pe.deduplicated.bam", sample = SAMPLES),
-        "data/bismark_aln/dedup/bismark_dedup_stats.txt",
-	"data/preprocessing_metrics/metrics.txt",
+        #"data/bismark_aln/dedup/bismark_dedup_stats.txt",
+	#"data/preprocessing_metrics/metrics.txt",
         expand("data/meth_extract/{sample}_val_1_bismark_bt2_pe.deduplicated.CpG_report.txt.gz", sample = SAMPLES),
-	#"data/ide/ide_complete.txt",
+	"data/ide/ide_complete.txt",
 	#"data/ide/bsseq_ide/ide_complete.txt",
 	#"data/diff/methylkit_dmr/diff_complete.txt",
 	#"data/diff/methylkit_dmr/annotation_complete.txt",
@@ -188,7 +188,7 @@ rule methylkit_ide:
     conda:
         "envs/methylkit.yaml"
     params:
-        inpath = "data/meth_extract",
+        inpath = config["covfile_path"],
         metadata = config["metadata_file"],
         group_var = config["group_var"],
         min_cov = config["min_cov"],
@@ -198,11 +198,17 @@ rule methylkit_ide:
         merge_regional = config["merge_regional"],
         min_cpg_region = config["min_cpg_region"],
         mpg = config["mpg"],
-	merge_dirname = config["merge_dirname"],
-	repeat_initial_ide = config["repeat_initial_ide"]
-        
+        merge_dirname = config["merge_dirname"],
+        first_time_ide = config["first_time_ide"],
+        list_object = config["list_object"],
+        explore_cov = config["explore_cov"],
+        do_merge = config["do_merge"],
+        merged_obj = config["merged_obj"],
+        perc_meth_obj = config["perc_meth_obj"],
+        pca_label_var = config["pca_label_var"],
+        pca_color_var = config["pca_color_var"]
     shell:
-        "Rscript scripts/run_methylkit_ide.R {params.inpath} {params.metadata} {params.group_var} {params.min_cov} {params.outdir} {params.min_cov_merge} {params.perc_merge} {params.merge_regional} {params.min_cpg_region} {params.mpg} {params.merge_dirname} {params.repeat_initial_ide}"
+        "Rscript scripts/run_methylkit_ide.R {params.inpath} {params.metadata} {params.group_var} {params.min_cov} {params.outdir} {params.min_cov_merge} {params.perc_merge} {params.merge_regional} {params.min_cpg_region} {params.mpg} {params.merge_dirname} {params.first_time_ide} {params.list_object} {params.explore_cov} {params.do_merge} {params.merged_obj} {params.perc_meth_obj} {params.pca_label_var} {params.pca_color_var}"
 
 rule bsseq_ide:
     input:

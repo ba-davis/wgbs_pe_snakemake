@@ -16,7 +16,7 @@ bismark_ref_genome:
 #   - RDS file hardcoded to be saved as "outdir"/RData/my_obj.RDS
 # If object already exists, set as FALSE and point to it with list_object param
 first_time_ide:
-  FALSE
+  TRUE
 
 # if a methylRawList object already exists, point to RDS file to read-in
 # can leave as "NULL" if you plan to read in the merged object instead
@@ -27,7 +27,7 @@ list_object:
 #   - will plot various cov distributions per sample in object
 # If you already have cov distributions and don't want to re-run, set as FALSE
 explore_cov:
-  FALSE
+  TRUE
 
 # When running IDE the first time, set as TRUE
 #    - will merge samples according to criteria in params below
@@ -36,15 +36,15 @@ explore_cov:
 #    - will export perc_meth.RDS in merge_dirname
 # If you already have a merged object, set as FALSE and point to it with merged_obj param
 do_merge:
-  FALSE
+  TRUE
 
 # if a merged object already exists, point to RDS file here
 merged_obj:
-  "/home/groups/hoolock2/u0/bd/Projects/ECP92/wgbs_pe_snakemake/data/ide/merged_mincov5_mpg5/meth.RDS"
+  "NULL"
 # if a perc_meth object already exists, point to RDS file here
 # assumes no missing values for PCA (use imputed if exists)
 perc_meth_obj:
-  "/home/groups/hoolock2/u0/bd/Projects/ECP92/wgbs_pe_snakemake/data/ide/merged_mincov5_mpg5/perc_meth_imputed.RDS"
+  "NULL"
 
 # base ide folder to create for ide analysis
 ide_outdir:
@@ -76,10 +76,10 @@ min_cpg_region:
   10 # if merging regions, minimum number of covered CpGs required in the region to retain it
 
 mpg:
-  "5" # min per group parameter for merging, NULL means all samples
+  "2" # min per group parameter for merging, NULL means all samples
 
 merge_dirname:
-  "merged_mincov5_mpg5"
+  "merged_mincov5_mpg2"
 
 # column in metadata file to label points on PCA plot
 pca_label_var:
@@ -88,6 +88,18 @@ pca_label_var:
 # column in metadata file to color points on PCA plot
 pca_color_var:
   "condition"
+
+########################
+# BSseq IDE Parameters #
+########################
+
+# uses same metadata_file parameter above in methylkit ide
+
+num_cores:
+  8
+
+strand_collapse:
+  TRUE # whether to collapse strands when reading in cpg reports, default is TRUE
 
 ############################
 # MethylKit DMR Parameters #
@@ -123,6 +135,48 @@ data_source:
 
 organism:
   "Homo_sapiens"
+
+#####################
+# dmrseq Parameters #
+#####################
+
+# when filtering for dmrseq comparison, min CpG cov required
+dmrseq_mincov:
+  1
+
+# when filtering for dmrseq comparison, min Percentage of
+# samples the CpG must have min Cov in
+# this is for samples in the groups used in the specific comparison
+# filtering is performed separately for each comparison
+dmrseq_perc_samp:
+  0.75
+
+# pval cutoff
+dmrseq_cutoff:
+  0.05
+
+# test covariate
+# name of column in design file
+test_covar:
+  Group
+
+# match covariate
+# name of column in design file
+match_covar:
+  Sex
+
+# number of cores for dmrseq
+dmrseq_cores:
+  12
+
+# genome for getAnnot/annotatr/dmrseq
+# for plotting DMRs
+dmr_genome:
+  mm10
+
+# max number of sig DMRs to plot
+num_plot:
+  10
 
 ####################
 # HOMER Parameters #
