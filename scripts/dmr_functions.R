@@ -260,7 +260,6 @@ calc.DMRs <- function(my.meth, covariate=NULL, overdispersion="MN", test="Chisq"
       if (!ucsc_format) {
         my.hypo$chr <- paste0("chr", my.hypo$chr)
       }
-      my.hypo$chr <- paste0("chr", my.hypo$chr)
       write.table(my.hypo,
                   paste0(comparison, ".sig", type, "s.hypo.GREAT.bed"),
                   sep="\t",
