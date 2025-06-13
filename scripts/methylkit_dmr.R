@@ -12,10 +12,10 @@ args <- commandArgs(trailingOnly = TRUE)
 # methylRawList object RDS file
 my_obj_rds <- args[1]
 
-lo_count <- args[2]
+lo_count <- as.numeric(args[2])
 hi_percent <- args[3]
 
-cov_bases <- args[4]
+cov_bases <- as.numeric(args[4])
 
 tile_mpg <- args[5]
 
