@@ -83,5 +83,20 @@
         "stderr": "logs/dmrseq_explore_%A.err",
         "mem": "500G",
         "cores": "12"
+    },
+    "homer_dmrs":
+    {
+        "stdout": "logs/homer_%A.out",
+        "stderr": "logs/homer_%A.err"
+    },
+    "homer_annotate":
+    {
+	"stdout": "logs/homer_annotate_%A.out",
+	"stderr": "logs/homer_annotate_%A.err"
+    },
+    "homer_subset_annot":
+    {
+	"stdout": "logs/homer_sub_annot_%A.out",
+	"stderr": "logs/homer_sub_annot_%A.err"
     }
 }

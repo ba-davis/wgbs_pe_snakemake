@@ -11,23 +11,27 @@ localrules: collect_fqc_metrics, collect_trimgalore_metrics, collect_bismark_met
 
 rule all:
     input:
-        #expand("data/fastqc/raw/{sample}_{dir}_fastqc.zip", sample = SAMPLES, dir = ["R1", "R2"]),
+        expand("data/fastqc/raw/{sample}_{dir}_fastqc.zip", sample = SAMPLES, dir = ["R1", "R2"]),
         expand("data/trimming/{sample}_val_{dir}.fq.gz", sample = SAMPLES, dir = ["1", "2"]),
-        #expand("data/fastqc/trim/{sample}_val_{dir}_fastqc.zip", sample = SAMPLES, dir = ["1", "2"]),
+        expand("data/fastqc/trim/{sample}_val_{dir}_fastqc.zip", sample = SAMPLES, dir = ["1", "2"]),
         expand("data/bismark_aln/{sample}_val_1_bismark_bt2_pe.bam", sample = SAMPLES),
-        #"data/fastqc/raw/fqc_stats.table.txt",
-        #"data/trimming/trimgalore_stats.txt",
-        #"data/bismark_aln/bismark_stats.txt",
+        "data/fastqc/raw/fqc_stats.table.txt",
+        "data/trimming/trimgalore_stats.txt",
+        "data/bismark_aln/bismark_stats.txt",
         expand("data/bismark_aln/dedup/{sample}_val_1_bismark_bt2_pe.deduplicated.bam", sample = SAMPLES),
-        #"data/bismark_aln/dedup/bismark_dedup_stats.txt",
-	#"data/preprocessing_metrics/metrics.txt",
+        "data/bismark_aln/dedup/bismark_dedup_stats.txt",
+	"data/preprocessing_metrics/metrics.txt",
         expand("data/meth_extract/{sample}_val_1_bismark_bt2_pe.deduplicated.CpG_report.txt.gz", sample = SAMPLES),
-	"data/ide/ide_complete.txt",
-	#"data/ide/bsseq_ide/ide_complete.txt",
-	#"data/diff/methylkit_dmr/diff_complete.txt",
-	#"data/diff/methylkit_dmr/annotation_complete.txt",
-	#"data/diff/dmrseq_dmr/dmrseq_diff_complete.txt",
-	#"data/diff/dmrseq_dmr/dmrseq_explore_complete.txt"
+        "data/ide/ide_complete.txt",
+	"data/ide/bsseq_ide/ide_complete.txt",
+	"data/diff/methylkit_dmr/diff_complete.txt",
+	"data/diff/methylkit_dmr/annotation_complete.txt",
+	"data/diff/dmrseq_dmr/dmrseq_diff_complete.txt",
+	"data/diff/dmrseq_dmr/dmrseq_explore_complete.txt",
+	"data/homer/homer_complete.txt",
+	"data/homer/homer_annotate_complete.txt",
+	"homer_subset_annot_complete.txt"
+	#"data/reports/analysis.html"
 
 
 rule fastqc_raw:
@@ -164,21 +168,21 @@ rule join_metrics:
     shell:
         "join -t $'\t' {input.fqc} {input.trim} | join -t $'\t' - {input.aln} | join -t $'\t' - {input.dedup} > {params.outfile}"
 
-rule meth_extract:
-    input:
-        dedup_bam = "data/bismark_aln/dedup/{sample}_val_1_bismark_bt2_pe.deduplicated.bam"
-    output:
-        "data/meth_extract/{sample}_val_1_bismark_bt2_pe.deduplicated.CpG_report.txt.gz",
-        "data/meth_extract/{sample}_val_1_bismark_bt2_pe.deduplicated.bismark.cov.gz",
-        "data/meth_extract/{sample}_val_1_bismark_bt2_pe.deduplicated.bedGraph.gz",
-        "data/meth_extract/{sample}_val_1_bismark_bt2_pe.deduplicated.M-bias.txt"
-    conda:
-        "envs/bismark.yaml"
-    params:
-        genome_dir = config["bismark_ref_genome"],
-        outdir = "data/meth_extract"
-    shell:
-        "bismark_methylation_extractor -p --comprehensive --ignore 2 --ignore_r2 2 --ignore_3prime_r2 2 --merge_non_CpG --bedGraph --cytosine_report --gzip --genome_folder {params.genome_dir} -o {params.outdir} {input.dedup_bam}" 
+#rule meth_extract:
+#    input:
+#        dedup_bam = "data/bismark_aln/dedup/{sample}_val_1_bismark_bt2_pe.deduplicated.bam"
+#    output:
+#        "data/meth_extract/{sample}_val_1_bismark_bt2_pe.deduplicated.CpG_report.txt.gz",
+#        "data/meth_extract/{sample}_val_1_bismark_bt2_pe.deduplicated.bismark.cov.gz",
+#        "data/meth_extract/{sample}_val_1_bismark_bt2_pe.deduplicated.bedGraph.gz",
+#        "data/meth_extract/{sample}_val_1_bismark_bt2_pe.deduplicated.M-bias.txt"
+#    conda:
+#        "envs/bismark.yaml"
+#    params:
+#        genome_dir = config["bismark_ref_genome"],
+#        outdir = "data/meth_extract"
+#    shell:
+#        "bismark_methylation_extractor -p --comprehensive --ignore 2 --ignore_r2 2 --ignore_3prime_r2 2 --merge_non_CpG --bedGraph --cytosine_report --gzip --genome_folder {params.genome_dir} -o {params.outdir} {input.dedup_bam}" 
 
 rule methylkit_ide:
     input:
@@ -330,3 +334,67 @@ rule dmrseq_explore:
 	    {params.dmr_genome} \
 	    {params.num_plot}
         """
+
+rule homer_dmrs:
+    input:
+        "data/diff/methylkit_dmr/diff_complete.txt"
+    output:
+        "data/homer/homer_complete.txt"
+    conda:
+        "envs/homer.yaml"
+    params:
+        inpath = "data/diff/methylkit_dmr",
+	    genome_fa = config["genome_fa"],
+	    ens_ref = config["ens_ref"],
+	    homer_outdir = config["homer_outdir"]
+    shell:
+        "./scripts/run_homer_dmr.sh {params.inpath} {params.genome_fa} {params.ens_ref} {params.homer_outdir}"
+
+rule homer_annotate:
+    input:
+        "data/homer/homer_complete.txt"
+    output:
+        "data/homer/homer_annotate_complete.txt"
+    conda:
+        "envs/homer.yaml"
+    params:
+        inpath = "data/diff/methylkit_dmr",
+	    genome_fa = config["genome_fa"],
+	    ens_ref = config["ens_ref"],
+	    homer_outdir = config["homer_outdir"]
+    shell:
+        "./scripts/homer_annotate.sh {params.inpath} {params.genome_fa} {params.ens_ref} {params.homer_outdir}"
+
+rule homer_subset_annot:
+    input:
+        "data/homer/homer_annotate_complete.txt"
+    output:
+        "homer_subset_annot_complete.txt"
+    conda:
+        "envs/methylkit.yaml"
+    params:
+        homer_outdir = config["homer_outdir"]
+    shell:
+        "Rscript scripts/run_homer_subset_annot.R {params.homer_outdir}"
+
+rule generate_report:
+    input:
+        metrics_file="data/preprocessing_metrics/metrics.txt"
+    output:
+        report="reports/analysis.html"
+    params:
+        rmd_template = "analysis_report_template.Rmd",
+        project_name = config["project_name"],
+        metadata_file = config["metadata_file"]
+    shell:
+        """
+        Rscript -e "rmarkdown::render(
+            '{params.rmd_template}',
+            output_file='{output.report}',
+            params=list(
+                project_name={params.project_name},
+                metadata='{params.metadata_file}',
+                metrics={input.metrics_file}
+            ))"
+        """
+

@@ -115,7 +115,7 @@ cov_bases:
   10 # min number of covered CpGs required in tiled region
 
 tile_mpg:
-  5 # min samples per group a tile must appear in
+  2 # min samples per group a tile must appear in
 
 design_file:
   "design.txt"
@@ -183,10 +183,10 @@ num_plot:
 ####################
 
 genome_fa:
-  "/home/groups/hoolock2/u0/genomes/ensembl/mus_musculus/Mus_musculus.GRCm38.dna.primary_assembly.fa" # path to the reference genome fasta to use with homer
+  "/home/groups/hoolock2/u0/genomes/ucsc/hg38/hg38.fa" # path to the reference genome fasta to use with homer
   
 ens_ref:
-  "TRUE" # if "TRUE", means you are using an ensembl ref genome with homer and the GREAT Bed files used as input need to have the "chr" removed
+  "FALSE" # if "TRUE", means you are using an ensembl ref genome with homer and the GREAT Bed files used as input need to have the "chr" removed
 
 homer_outdir:
   "data/homer/" # relative path to place output folders

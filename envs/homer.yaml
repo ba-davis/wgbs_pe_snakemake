@@ -1,0 +1,24 @@
+name: /home/groups/hoolock2/u0/bd/miniconda3/envs/homer
+channels:
+  - bioconda
+  - conda-forge
+  - defaults
+dependencies:
+  - _libgcc_mutex=0.1=conda_forge
+  - _openmp_mutex=4.5=2_gnu
+  - ca-certificates=2023.5.7=hbcca054_0
+  - gettext=0.21.1=h27087fc_0
+  - homer=4.11=pl5262h9f5acd7_8
+  - libgcc-ng=13.1.0=he5830b7_0
+  - libgomp=13.1.0=he5830b7_0
+  - libidn2=2.3.4=h166bdaf_0
+  - libnsl=2.0.0=h7f98852_0
+  - libstdcxx-ng=13.1.0=hfd8a6a1_0
+  - libunistring=0.9.10=h7f98852_0
+  - libzlib=1.2.13=hd590300_5
+  - openssl=3.1.1=hd590300_1
+  - perl=5.32.1=2_h7f98852_perl5
+  - unzip=6.0=h7f98852_3
+  - wget=1.20.3=ha35d2d1_1
+  - zlib=1.2.13=hd590300_5
+prefix: /home/groups/hoolock2/u0/bd/miniconda3/envs/homer
