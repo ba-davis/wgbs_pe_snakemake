@@ -77,6 +77,12 @@ create_covar <- function(design_df, mycomp) {
 
   # subset to covar columns only
   df_covar <- df[, 6:ncol(df), drop = FALSE]
+
+  # convert character columns to factor
+  df_covar[] <- lapply(df_covar, function(col) {
+    if (is.character(col)) as.factor(col) else col
+  })
+
   return(df_covar)
 }
 
